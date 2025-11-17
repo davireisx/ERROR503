@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class TeleportInScene : MonoBehaviour
+public class TeleportEsdras : MonoBehaviour
 {
     public static bool teleporting = false;
     public static int targetSpawnIndex = 0;
@@ -9,19 +9,13 @@ public class TeleportInScene : MonoBehaviour
     public static Vector2 savedJoystickInput = Vector2.zero;
 
     [SerializeField] private int mySpawn; // Defina no inspetor para cada portal
-    [SerializeField] private int scenarioNumber; // Novo: 1 = cen√°rio 1, 2 = cen√°rio 2
+    [SerializeField] private int scenarioNumber; // Novo: 1 = cen·rio 1, 2 = cen·rio 2
     [SerializeField] private CanvasGroup fadeCanvas;
     [SerializeField] private float fadeDuration = 1f;
     [SerializeField] private Transform[] spawnPoints; // Pontos de destino no mapa, posicione no Inspector
 
-    private bool playerInside = false;
-    private float timeInside = 0f;
-    [SerializeField] private float timeToTeleport = 0.3f;
-
-    private GameObject playerObj;
-
-    // Adicionamos uma refer√™ncia ao CameraManager para ser configurada no Inspector
-    [SerializeField] private CameraManager cameraManager;
+    // Adicionamos uma referÍncia ao CameraManager para ser configurada no Inspector
+    [SerializeField] private CameraManagerEsdras cameraManager;
 
     private Collider2D myCollider;
 
@@ -29,35 +23,6 @@ public class TeleportInScene : MonoBehaviour
     {
         myCollider = GetComponent<Collider2D>();
     }
-
-    private void Update()
-    {
-        if (playerObj == null)
-        {
-            playerObj = GameObject.FindGameObjectWithTag("Player");
-        }
-
-        if (playerObj != null && !teleporting)
-        {
-            Vector2 playerPos = playerObj.transform.position;
-
-            if (myCollider.OverlapPoint(playerPos))
-            {
-                // Teleportar IMEDIATAMENTE ao detectar que o player est√° dentro
-                Alunos aluno = playerObj.GetComponent<Alunos>();
-                if (aluno != null)
-                {
-                    teleporting = true;
-                    targetSpawnIndex = mySpawn;
-                    savedJoystickInput = aluno.GetCurrentInput();
-                    StartCoroutine(Transition(playerObj));
-                }
-            }
-        }
-    }
-
-
-
 
     private void Start()
     {
@@ -81,14 +46,9 @@ public class TeleportInScene : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            playerInside = true;
-            timeInside = 0f;
-            playerObj = other.gameObject;
-
             Alunos aluno = other.GetComponent<Alunos>();
 
-            // Opcional: teleportar imediatamente se o jogador estiver se movendo
-            if (aluno != null) //&& (aluno.IsMoving() || aluno.IsInputLocked())//)
+            if (aluno != null && aluno.IsMoving()) // SÛ teleporta se o jogador estiver se movendo
             {
                 teleporting = true;
                 targetSpawnIndex = mySpawn;
@@ -97,17 +57,6 @@ public class TeleportInScene : MonoBehaviour
             }
         }
     }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerInside = false;
-            timeInside = 0f;
-            playerObj = null;
-        }
-    }
-
 
     private IEnumerator Transition(GameObject player)
     {
@@ -133,7 +82,7 @@ public class TeleportInScene : MonoBehaviour
             alu.SetInput(savedJoystickInput);
         }
 
-        // ATUALIZA a c√¢mera
+        // ATUALIZA a c‚mera
         if (cameraManager != null)
         {
             cameraManager.SetScenarioBounds(scenarioNumber);

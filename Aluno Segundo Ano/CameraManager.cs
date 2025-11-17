@@ -4,7 +4,7 @@ using System.Collections;
 public class CameraManager : MonoBehaviour
 {
     public CameraSeguirEsdras cameraScript;
-    public AlunoSegundoAno player; // arraste o Player no Inspector
+    public Alunos player; // arraste o Player no Inspector
 
     [Header("Configurações de Spawn")]
     public float delayAtivacaoSpawn = 1.5f;
@@ -84,8 +84,12 @@ public class CameraManager : MonoBehaviour
     public float maxX11;
     public float minY11;
     public float maxY11;
-    public AlunoSurgindo AlunosSpawns11;
 
+    [Header("Inicio  - Number 12")]
+    public float minX12;
+    public float maxX12;
+    public float minY12;
+    public float maxY12;
 
 
     private void Start()
@@ -187,7 +191,14 @@ public class CameraManager : MonoBehaviour
             cameraScript.globalMaxX = maxX11;
             cameraScript.globalMinY = minY11;
             cameraScript.globalMaxY = maxY11;
-            StartCoroutine(AtivarSpawnComDelay(AlunosSpawns11));
+        }
+
+        else if (index == 12)
+        {
+            cameraScript.globalMinX = minX11;
+            cameraScript.globalMaxX = maxX11;
+            cameraScript.globalMinY = minY11;
+            cameraScript.globalMaxY = maxY11;
         }
 
         if (player != null)
@@ -223,6 +234,5 @@ public class CameraManager : MonoBehaviour
         AlunosSpawns6.enabled = false;
         AlunosSpawns7.enabled = false;
         AlunosSpawns8.enabled = false;
-        AlunosSpawns11.enabled = false;
     }
 }

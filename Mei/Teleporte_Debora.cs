@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class TeleportInScene : MonoBehaviour
+public class TeleportDebora : MonoBehaviour
 {
     public static bool teleporting = false;
     public static int targetSpawnIndex = 0;
@@ -9,7 +9,7 @@ public class TeleportInScene : MonoBehaviour
     public static Vector2 savedJoystickInput = Vector2.zero;
 
     [SerializeField] private int mySpawn; // Defina no inspetor para cada portal
-    [SerializeField] private int scenarioNumber; // Novo: 1 = cen√°rio 1, 2 = cen√°rio 2
+    [SerializeField] private int scenarioNumber; // Novo: 1 = cen·rio 1, 2 = cen·rio 2
     [SerializeField] private CanvasGroup fadeCanvas;
     [SerializeField] private float fadeDuration = 1f;
     [SerializeField] private Transform[] spawnPoints; // Pontos de destino no mapa, posicione no Inspector
@@ -20,8 +20,8 @@ public class TeleportInScene : MonoBehaviour
 
     private GameObject playerObj;
 
-    // Adicionamos uma refer√™ncia ao CameraManager para ser configurada no Inspector
-    [SerializeField] private CameraManager cameraManager;
+    // Adicionamos uma referÍncia ao CameraManager para ser configurada no Inspector
+    [SerializeField] private CameraManagerEsdras cameraManager;
 
     private Collider2D myCollider;
 
@@ -43,7 +43,7 @@ public class TeleportInScene : MonoBehaviour
 
             if (myCollider.OverlapPoint(playerPos))
             {
-                // Teleportar IMEDIATAMENTE ao detectar que o player est√° dentro
+                // Teleportar IMEDIATAMENTE ao detectar que o player est· dentro
                 Alunos aluno = playerObj.GetComponent<Alunos>();
                 if (aluno != null)
                 {
@@ -129,11 +129,11 @@ public class TeleportInScene : MonoBehaviour
         {
             player.transform.position = spawnPoints[targetSpawnIndex].position;
 
-            Alunos alu = player.GetComponent<Alunos>();
-            alu.SetInput(savedJoystickInput);
+            Alunos aluno = player.GetComponent<Alunos>();
+            aluno.SetInput(savedJoystickInput);
         }
 
-        // ATUALIZA a c√¢mera
+        // ATUALIZA a c‚mera
         if (cameraManager != null)
         {
             cameraManager.SetScenarioBounds(scenarioNumber);
