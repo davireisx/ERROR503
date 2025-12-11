@@ -7,38 +7,33 @@ using System.IO;
 
 public class IniciarJogoTeste : MonoBehaviour
 {
-    [Header("ReferÍncias")]
+    [Header("Refer√™ncias")]
     public VideoPlayer videoPlayer;
     public GameObject videoContainer;
     public CanvasGroup fadeCanvasGroup;
 
-    [Header("ConfiguraÁıes")]
+    [Header("Configura√ß√µes")]
     public string videoFileName = "cutscene.mp4";
     public string nextSceneName = "Scene2";
     public float fadeDuration = 1.5f;
-    public float tempoMaximoEspera = 6f; // tempo m·ximo de espera do prepare
+    public float tempoMaximoEspera = 6f; // tempo m√°ximo de espera do prepare
 
     private bool videoTerminado = false;
 
     void Start()
     {
-        // ComeÁa com a tela preta
+        // Come√ßa com a tela preta
         if (fadeCanvasGroup != null)
             fadeCanvasGroup.alpha = 1f;
 
-        // Garante reset completo
+        // Reset completo
         videoPlayer.Stop();
         videoPlayer.time = 0;
         videoPlayer.frame = 0;
         videoTerminado = false;
 
-        // Caminho do vÌdeo
-        string videoPath;
-#if UNITY_ANDROID && !UNITY_EDITOR
-        videoPath = "jar:file://" + Application.dataPath + "!/assets/" + videoFileName;
-#else
-        videoPath = Path.Combine(Application.streamingAssetsPath, videoFileName);
-#endif
+        // Caminho do v√≠deo
+        string videoPath = ObterCaminhoVideo();
 
         videoPlayer.source = VideoSource.Url;
         videoPlayer.url = videoPath;
@@ -46,8 +41,28 @@ public class IniciarJogoTeste : MonoBehaviour
         // Eventos
         videoPlayer.loopPointReached += OnVideoFinished;
 
-        // Inicia a preparaÁ„o com timeout
+        // Inicia a prepara√ß√£o com timeout
         StartCoroutine(PrepararCutsceneComTimeout());
+    }
+
+    string ObterCaminhoVideo()
+    {
+        // 1Ô∏è‚É£ Primeiro tenta carregar do cache local (caso tenha sido pr√©-carregado)
+        string caminhoCache = Path.Combine(Application.persistentDataPath, videoFileName);
+        if (File.Exists(caminhoCache))
+        {
+            Debug.Log($"üé¨ Usando v√≠deo pr√©-carregado: {caminhoCache}");
+            return caminhoCache;
+        }
+
+        // 2Ô∏è‚É£ Caso contr√°rio, usa o caminho original da plataforma
+#if UNITY_ANDROID && !UNITY_EDITOR
+        return "jar:file://" + Application.dataPath + "!/assets/" + videoFileName;
+#elif UNITY_IOS && !UNITY_EDITOR
+        return Path.Combine(Application.streamingAssetsPath, videoFileName);
+#else
+        return Path.Combine(Application.streamingAssetsPath, videoFileName);
+#endif
     }
 
     IEnumerator PrepararCutsceneComTimeout()
@@ -61,15 +76,13 @@ public class IniciarJogoTeste : MonoBehaviour
             yield return null;
         }
 
-        // Se preparou, toca normalmente
         if (videoPlayer.isPrepared)
         {
             StartCoroutine(RestartFromBeginning());
         }
         else
         {
-            // Se n„o preparou, pula para a prÛxima cena
-            Debug.LogWarning("?? Cutscene n„o carregou a tempo ó pulando para a prÛxima cena.");
+            Debug.LogWarning("‚ö†Ô∏è Cutscene n√£o carregou a tempo ‚Äî pulando para a pr√≥xima cena.");
             SceneManager.LoadScene(nextSceneName);
         }
     }

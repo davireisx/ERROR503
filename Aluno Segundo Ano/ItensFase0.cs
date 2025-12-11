@@ -4,19 +4,19 @@ using System.Collections;
 
 public class ItensFase0 : MonoBehaviour
 {
-    [Header("ConfiguraÁıes")]
+    [Header("Configura√ß√µes")]
     public Transform player;
 
-    [Tooltip("Dist‚ncia em que o item comeÁa a piscar (efeito visual).")]
+    [Tooltip("Dist√¢ncia em que o item come√ßa a piscar (efeito visual).")]
     public float rangeVisual = 5f;
 
-    [Tooltip("Dist‚ncia real de interaÁ„o (deve ser menor que o visual).")]
+    [Tooltip("Dist√¢ncia real de intera√ß√£o (deve ser menor que o visual).")]
     public float rangeProximidade = 2f;
 
     [Header("Audio")]
     public AudioSource item;
 
-    [Header("ReferÍncias Visuais")]
+    [Header("Refer√™ncias Visuais")]
     public GameObject hud;
     public GameObject check;
     public GameObject checkAntes;
@@ -36,15 +36,13 @@ public class ItensFase0 : MonoBehaviour
         if (spriteRenderer != null)
             originalColor = spriteRenderer.color;
         else
-            Debug.LogWarning($"[{gameObject.name}] SpriteRenderer n„o atribuÌdo!");
+            Debug.LogWarning($"[{gameObject.name}] SpriteRenderer n√£o atribu√≠do!");
 
         if (hud != null)
             hud.SetActive(false);
 
-        StartCoroutine(ShowImageAfterDelay());
-
         if (player == null)
-            Debug.LogError("Player n„o atribuÌdo!");
+            Debug.LogError("Player n√£o atribu√≠do!");
     }
 
     void Update()
@@ -54,13 +52,17 @@ public class ItensFase0 : MonoBehaviour
 
         if (interactionComplete) return;
 
-        // Clique PC
+        // ---------------------- INTERA√á√ÉO POR CLIQUE ----------------------
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
             TentarInteragir();
 
-        // Toque Mobile
+        // ---------------------- INTERA√á√ÉO POR TOQUE -----------------------
         if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
             TentarInteragir();
+
+        // ---------------------- INTERA√á√ÉO POR TECLA SPACE -----------------
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+            InteragirDireto(); // <-- intera√ß√£o pelo teclado (sem Raycast)
     }
 
     void VerificarDistancias()
@@ -96,7 +98,7 @@ public class ItensFase0 : MonoBehaviour
         Vector2 screenPos = Vector2.zero;
         bool inputDetected = false;
 
-        // Detecta posiÁ„o da interaÁ„o (mouse ou toque)
+        // Detecta posi√ß√£o da intera√ß√£o (mouse ou toque)
         if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             screenPos = Mouse.current.position.ReadValue();
@@ -110,42 +112,42 @@ public class ItensFase0 : MonoBehaviour
 
         if (!inputDetected) return;
 
-        // Converte posiÁ„o para o mundo
+        // Converte posi√ß√£o para o mundo
         Vector2 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
 
-        // Faz raycast 2D com Layer Mask para evitar conflitos
+        // Faz raycast 2D
         RaycastHit2D hit = Physics2D.Raycast(worldPos, Vector2.zero, Mathf.Infinity);
 
-        // Debug visual para ajudar no troubleshooting
         Debug.DrawRay(worldPos, Vector2.one * 0.1f, Color.red, 1f);
 
-        if (hit.collider != null)
+        if (hit.collider != null && hit.collider.gameObject == gameObject)
         {
-            Debug.Log($"Clicou em: {hit.collider.gameObject.name} (Alvo: {gameObject.name})");
-
-            // Verifica se clicou neste objeto especÌfico
-            if (hit.collider.gameObject == gameObject)
-            {
-                Debug.Log("InteraÁ„o confirmada!");
-                Interagir();
-            }
+            Debug.Log("Intera√ß√£o confirmada por toque/clique!");
+            Interagir();
         }
         else
         {
-            Debug.Log("Raycast n„o acertou nenhum collider");
-
-            // Fallback: verifica por overlap point como alternativa
             Collider2D[] overlaps = Physics2D.OverlapPointAll(worldPos);
             foreach (Collider2D col in overlaps)
             {
                 if (col.gameObject == gameObject)
                 {
-                    Debug.Log("InteraÁ„o detectada via OverlapPoint!");
+                    Debug.Log("Intera√ß√£o detectada via OverlapPoint!");
                     Interagir();
                     break;
                 }
             }
         }
+    }
+
+    // ---------------------- M√âTODO PARA INTERA√á√ÉO PELO TECLADO (SPACE) ----------------------
+    void InteragirDireto()
+    {
+        if (interactionComplete || !playerInProximityRange)
+            return;
+
+        Debug.Log("Intera√ß√£o confirmada pelo teclado (SPACE)!");
+        Interagir();
     }
 
     void Interagir()
@@ -154,15 +156,12 @@ public class ItensFase0 : MonoBehaviour
 
         interactionComplete = true;
 
-        // Toca o som se disponÌvel
         if (item != null)
             item.Play();
 
-        // Mostra check de feedback
         if (check != null) check.SetActive(true);
         if (checkAntes != null) checkAntes.SetActive(false);
 
-        // Desabilita as setas
         if (setas != null) setas.SetActive(false);
 
         StartCoroutine(ExecutarCheckComDelay());
@@ -170,9 +169,7 @@ public class ItensFase0 : MonoBehaviour
 
     IEnumerator ExecutarCheckComDelay()
     {
-        yield return new WaitForSeconds(0.5f); // tempo de feedback
-
-        // Destroi o item depois da interaÁ„o
+        yield return new WaitForSeconds(0.5f);
         Destroy(gameObject);
     }
 

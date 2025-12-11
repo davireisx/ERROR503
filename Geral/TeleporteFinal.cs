@@ -44,7 +44,7 @@ public class TeleportFinal : MonoBehaviour
             if (myCollider.OverlapPoint(playerPos))
             {
                 // Teleportar IMEDIATAMENTE ao detectar que o player está dentro
-                AlunoSegundoAno aluno = playerObj.GetComponent<AlunoSegundoAno>();
+                Alunos aluno = playerObj.GetComponent<Alunos>();
                 if (aluno != null)
                 {
                     teleporting = true;
@@ -85,7 +85,7 @@ public class TeleportFinal : MonoBehaviour
             timeInside = 0f;
             playerObj = other.gameObject;
 
-            AlunoSegundoAno aluno = other.GetComponent<AlunoSegundoAno>();
+            Alunos aluno = other.GetComponent<Alunos>();
 
             // Opcional: teleportar imediatamente se o jogador estiver se movendo
             if (aluno != null) //&& (aluno.IsMoving() || aluno.IsInputLocked())//)
