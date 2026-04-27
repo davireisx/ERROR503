@@ -1,7 +1,7 @@
 # 🎮 ERROR 503 — Jogo Mobile Educacional em Unity
 
 ## 📌 Sobre o Projeto
-ERROR 503 é um jogo mobile educacional desenvolvido em **Unity (C#)** durante meu período como **Estagiário Técnico em Desenvolvimento de Sistemas na ETE FMC**.  
+ERROR 503 é um jogo mobile educacional desenvolvido em **Unity (C#)** durante meu período como **Estagiário Técnico em Desenvolvimento de Sistemas na ETE FMC** no ano de 2025.  
 O projeto foi criado com o objetivo de aplicar, de forma prática e concreta, os conhecimentos adquiridos ao longo de 2024 no curso de Desenvolvimento de Sistemas, transformando teoria em um produto funcional e inovador.
 
 ---
